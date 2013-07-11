@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+
+    <link rel="stylesheet" type="text/css" href="/javascripts/jquery-ui/dist/jquery-ui.css">
+  	<script type="text/javascript" src="/javascripts/require.js"></script>
+  	<script type="text/javascript">
+    require(["jquery"], function($){
+      jQuery = $;
+      require(["sammy", "jquery-ui"], function(Sammy) {
+        var app = Sammy(function(){
+            this.get('#/test', function(){
+              alert('sdf');
+            });
+            this.get('', function(){
+              alert('all');
+            });
+        })
+         $('input').datepicker();
+
+         //fix redirect problem with datepicker
+         $(document).delegate('a.ui-datepicker-prev, a.ui-datepicker-next', 'click', 
+          function(e){
+            e.preventDefault()
+         });
+         app.run();
+      })
+    })
+  		
+  	</script>
+  </head>
+  <body>
+  	<input type="text" />
+  </body>
+</html>
