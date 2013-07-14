@@ -32,6 +32,31 @@ if ('development' == app.get('env')) {
 app.get('/', routes.index);
 app.get('/users', user.list);
 
+
+app.post('/login', function(req, res) {
+	user = req.body["name"];
+	res.json({
+		user : user
+		, page : user == 'u1' ? '#/page1' : '#/page2'
+	})
+})
+
+app.get('/logout', function(req, res) {
+	user = null;
+	res.json({ success : true });
+})
+
+app.get('/session', function(req, res) {
+	res.json({
+		login : !!user,
+		user : user,
+		page : user == 'u1' ? '#/page1' : '#/page2'
+	});
+})
+
+
+var user = null;
+
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });

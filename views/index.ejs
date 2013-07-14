@@ -8,29 +8,120 @@
   	<script type="text/javascript">
     require(["jquery"], function($){
       jQuery = $;
-      require(["sammy", "jquery-ui"], function(Sammy) {
-        var app = Sammy(function(){
-            this.get('#/test', function(){
-              alert('sdf');
-            });
-            this.get('', function(){
-              alert('all');
-            });
-        })
-         $('input').datepicker();
+      require(["sammy", "knockout"], function(Sammy, ko) {
+        var app = {
+          content : ko.observable(null)
+        };
+        var current_user = false;
 
-         //fix redirect problem with datepicker
-         $(document).delegate('a.ui-datepicker-prev, a.ui-datepicker-next', 'click', 
-          function(e){
-            e.preventDefault()
-         });
-         app.run();
+        var Login = function() {
+            var self = this;
+            
+            self.name = ko.observable();
+
+            self.login = function() {
+              $.post('/login', { name : self.name() }, function(r) {
+                window.location = r.page;
+              })
+            }
+
+            self.template = 'login';
+        }
+
+        var Loyout = function(user) {
+          var self = this;
+          self.username = ko.observable(user);
+          self.logout = function() {
+            $.get('/logout', function() {
+              current_user = false;
+              window.location = '#/login';
+            });
+          }
+
+          self.content = ko.observable(null);
+
+          self.template = 'loyout';
+        } 
+
+        Sammy(function(){
+            this.get('#/page1', function(){
+              app.content(new Loyout(current_user.user));
+              app.content().content({ template : 'page1'});
+
+            });
+            
+            this.get('#/page2', function() {
+              app.content(new Loyout(current_user.user));
+              app.content().content({ template : 'page2'});
+              
+            });
+
+            this.get('#/login', function() {
+              if (!!current_user) window.location = current_user.page;
+              else
+                app.content(new Login);
+            })
+
+            this.get('', function(){
+              this.redirect('#/login');
+            });
+
+            
+
+            this.around(function(callback) {
+               // /session returns a JSON representation of the logged in user
+               // or an empty object
+               var that = this;
+               if (!current_user && this.path != '/#/login') {
+                 $.getJSON('/session', function(json) {
+                   if (json.login) {
+                     // show the user as logged in
+                     current_user = json;
+
+                     // execute the route path
+                     callback();
+                   } else {
+                     // show the user as not logged in
+                     current_user = false;
+                     // the context of aroundFilters is an EventContext
+                     that.redirect('#/login');
+                   }
+                 });
+               } else {
+                  
+                 // execute the route path
+                 callback();
+               }
+            });
+
+        }).run();
+
+        ko.applyBindings(app);
       })
     })
   		
   	</script>
+    <script type="text/template" id="page1">
+      <p>page1<p>
+    </script>
+    <script type="text/template" id="page2">
+      <p>page2<p>
+    </script>
+    <script type="text/template" id="loyout">
+    <h1 data-bind="text : username"></h1>
+    <a href="#" data-bind="click : logout">logout</a>  
+    <!-- ko with : content -->
+    <!-- ko template : { name : template } -->
+    <!-- /ko -->
+    <!-- /ko -->
+    </script>
+    <script type="text/template" id="login">
+      <p><input type="text" data-bind="value : name" /><p>
+      <a href="#" data-bind="click : login">login</a>
+    </script>
   </head>
-  <body>
-  	<input type="text" />
+  <body data-bind="with : content">
+    <!-- ko template : { name : template } -->
+    <!-- /ko -->
   </body>
 </html>

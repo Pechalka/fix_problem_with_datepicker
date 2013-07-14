@@ -11,6 +11,11 @@ var jam = {
             "main": "dist/jquery-ui.min.js"
         },
         {
+            "name": "knockout",
+            "location": "javascripts/knockout",
+            "main": "knockout.js"
+        },
+        {
             "name": "sammy",
             "location": "javascripts/sammy",
             "main": "sammy.js"
@@ -34,6 +39,11 @@ if (typeof require !== "undefined" && require.config) {
             "main": "dist/jquery-ui.min.js"
         },
         {
+            "name": "knockout",
+            "location": "javascripts/knockout",
+            "main": "knockout.js"
+        },
+        {
             "name": "sammy",
             "location": "javascripts/sammy",
             "main": "sammy.js"
@@ -54,6 +64,11 @@ else {
             "name": "jquery-ui",
             "location": "javascripts/jquery-ui",
             "main": "dist/jquery-ui.min.js"
+        },
+        {
+            "name": "knockout",
+            "location": "javascripts/knockout",
+            "main": "knockout.js"
         },
         {
             "name": "sammy",

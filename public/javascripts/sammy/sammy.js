@@ -286,7 +286,6 @@ $.extend(Sammy.DefaultLocationProxy.prototype , {
         });
         // bind to link clicks that have routes
         $(document).delegate('a', 'click.history-' + this.app.eventNamespace(), function (e) {
-          debugger
           if (e.isDefaultPrevented() || e.metaKey || e.ctrlKey) {
             return;
           }
